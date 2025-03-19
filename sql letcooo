@@ -1,0 +1,1023 @@
+/* Table: Products
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| product_id  | int     |
+| low_fats    | enum    |
+| recyclable  | enum    |
++-------------+---------+
+product_id is the primary key (column with unique values) for this table.
+low_fats is an ENUM (category) of type ('Y', 'N') where 'Y' means this product is low fat and 'N' means it is not.
+recyclable is an ENUM (category) of types ('Y', 'N') where 'Y' means this product is recyclable and 'N' means it is not.
+
+Burada benden istenen Products tablosunda yer alan ürünlerden:
+
+ Düşük yağlı (low_fats = 'Y') ve
+ Geri dönüştürülebilir (recyclable = 'Y')
+olan ürünlerin product_id değerlerini bulmamızı istiyor.
+
+  sorgumuz :*/
+
+SELECT product_id
+FROM Products
+WHERE low_fats = 'Y'
+AND recyclable = 'Y'
+
+/*
+Table: Customer
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| id          | int     |
+| name        | varchar |
+| referee_id  | int     |
++-------------+---------+
+In SQL, id is the primary key column for this table.
+Each row of this table indicates the id of a customer, their name, and the id of the customer who referred them.
+ 
+
+Find the names of the customer that are not referred by the customer with id = 2.
+
+Return the result table in any order.
+
+The result format is in the following example.
+Customer tablosundaki müşterilerden:
+
+ referee_id değeri 2 olmayan müşterilerin name değerlerini bulmamızı istiyor.
+ Eğer referee_id NULL ise bu müşteri de sonuç listesine dahil edilmelidir.
+ sorgumuz
+
+*/SELECT name 
+FROM Customer 
+WHERE referee_id != 2 OR referee_id IS null
+
+/* Table: World
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| name        | varchar |
+| continent   | varchar |
+| area        | int     |
+| population  | int     |
+| gdp         | bigint  |
++-------------+---------+
+name is the primary key (column with unique values) for this table.
+Each row of this table gives information about the name of a country, the continent to which it belongs, its area, the population, and its GDP value.
+ 
+
+A country is big if:
+
+it has an area of at least three million (i.e., 3000000 km2), or
+it has a population of at least twenty-five million (i.e., 25000000).
+Write a solution to find the name, population, and area of the big countries.
+
+Return the result table in any order.
+Bu soru, World tablosundaki ülkelerden:
+
+ Alanı 3 milyon km² veya daha büyük olan ülkeleri,
+ Nüfusu 25 milyon veya daha fazla olan ülkeleri bulmamızı istiyor.
+
+
+
+*/
+SELECT name, population, area
+FROM World
+WHERE area >= 3000000
+OR population >= 25000000;
+
+/* 
+Table: Views
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| article_id    | int     |
+| author_id     | int     |
+| viewer_id     | int     |
+| view_date     | date    |
++---------------+---------+
+There is no primary key (column with unique values) for this table, the table may have duplicate rows.
+Each row of this table indicates that some viewer viewed an article (written by some author) on some date. 
+Note that equal author_id and viewer_id indicate the same person.
+ 
+
+Write a solution to find all the authors that viewed at least one of their own articles.
+
+Return the result table sorted by id in ascending order.
+
+The result format is in the following example.
+Bu soru, Views tablosundan:
+
+Kendi makalesini görüntüleyen yazarların kimliklerini (author_id) bulmamızı istiyor.
+
+
+
+*/SELECT DISTINCT author_id AS id
+FROM Views
+WHERE author_id = viewer_id
+ORDER BY id;
+
+/**/
+
+Table: Tweets
+
++----------------+---------+
+| Column Name    | Type    |
++----------------+---------+
+| tweet_id       | int     |
+| content        | varchar |
++----------------+---------+
+tweet_id is the primary key (column with unique values) for this table.
+content consists of alphanumeric characters, '!', or ' ' and no other special characters.
+This table contains all the tweets in a social media app.
+ 
+
+Write a solution to find the IDs of the invalid tweets. The tweet is invalid if the number of characters used in the content of the tweet is strictly greater than 15.
+
+Return the result table in any order.
+
+The result format is in the following example.
+
+Bu soru, Tweets tablosundan:
+15 karakterden uzun olan tweetlerin kimliklerini (tweet_id) bulmamızı istiyor.
+
+
+*/
+SELECT tweet_id
+FROM Tweets
+WHERE length(content) > 15
+
+/*
+
+Table: Employees
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| id            | int     |
+| name          | varchar |
++---------------+---------+
+id is the primary key (column with unique values) for this table.
+Each row of this table contains the id and the name of an employee in a company.
+ 
+
+Table: EmployeeUNI
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| id            | int     |
+| unique_id     | int     |
++---------------+---------+
+(id, unique_id) is the primary key (combination of columns with unique values) for this table.
+Each row of this table contains the id and the corresponding unique id of an employee in the company.
+ 
+
+Write a solution to show the unique ID of each user, If a user does not have a unique ID replace just show null.
+
+Return the result table in any order.
+Bu soru, Employees ve EmployeeUNI tablolarını birleştirip:
+Her çalışanın unique_id değerini listelememizi istiyor.
+Eğer bir çalışanın unique_id yoksa NULL olarak göstermemizi istiyor.
+*/
+SELECT unique_id, name
+FROM Employees e
+LEFT JOIN EmployeeUNI eu
+ON e.id = eu.id
+/*
+Table: Sales
+
++-------------+-------+
+| Column Name | Type  |
++-------------+-------+
+| sale_id     | int   |
+| product_id  | int   |
+| year        | int   |
+| quantity    | int   |
+| price       | int   |
++-------------+-------+
+(sale_id, year) is the primary key (combination of columns with unique values) of this table.
+product_id is a foreign key (reference column) to Product table.
+Each row of this table shows a sale on the product product_id in a certain year.
+Note that the price is per unit.
+ 
+
+Table: Product
+
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| product_id   | int     |
+| product_name | varchar |
++--------------+---------+
+product_id is the primary key (column with unique values) of this table.
+Each row of this table indicates the product name of each product.
+ 
+
+Write a solution to report the product_name, year, and price for each sale_id in the Sales table.
+
+Return the resulting table in any order.
+
+Bu soru, iki tabloyu birleştirerek aşağıdaki bilgileri listelememizi istiyor:
+
+product_name → Ürünün adı
+year → Satışın gerçekleştiği yıl
+price → Satışın birim fiyatı
+*/
+SELECT product_name, year, price
+FROM Sales s
+LEFT JOIN Product p
+ON s.product_id = p.product_id
+/*
+Table: Visits
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| visit_id    | int     |
+| customer_id | int     |
++-------------+---------+
+visit_id is the column with unique values for this table.
+This table contains information about the customers who visited the mall.
+ 
+
+Table: Transactions
+
++----------------+---------+
+| Column Name    | Type    |
++----------------+---------+
+| transaction_id | int     |
+| visit_id       | int     |
+| amount         | int     |
++----------------+---------+
+transaction_id is column with unique values for this table.
+This table contains information about the transactions made during the visit_id.
+ 
+
+Write a solution to find the IDs of the users who visited without making any transactions and the number of times they made these types of visits.
+
+Return the result table sorted in any order.
+
+Bu soru, Visits ve Transactions tablolarını kullanarak, sadece ziyaret yapıp herhangi bir işlem gerçekleştirmemiş kullanıcıları ve bu tür ziyaretleri kaç kez yaptıklarını listelememizi istiyor.
+*/
+SELECT v.customer_id, COUNT(v.visit_id) AS visit_count
+FROM Visits v
+LEFT JOIN Transactions t
+ON v.visit_id = t.visit_id
+WHERE t.transaction_id IS NULL
+GROUP BY v.customer_id;
+
+
+/*
+Table: Weather
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| id            | int     |
+| recordDate    | date    |
+| temperature   | int     |
++---------------+---------+
+id is the column with unique values for this table.
+There are no different rows with the same recordDate.
+This table contains information about the temperature on a certain day.
+ 
+
+Write a solution to find all dates' id with higher temperatures compared to its previous dates (yesterday).
+
+Return the result table in any order.
+Bu soru, Weather tablosunda her bir günün sıcaklık bilgilerini kullanarak, önceki günün sıcaklığından daha yüksek sıcaklığa sahip olan günlerin id'lerini listelememizi istiyor.
+Yani, her bir günün sıcaklığını, bir önceki günün sıcaklığıyla karşılaştıracağız.
+
+
+*/
+SELECT w1.id 
+FROM Weather w1, Weather w2
+WHERE DATEDIFF(w1.recordDate, w2.recordDate) = 1
+AND w1.temperature > w2.temperature
+
+/*
+Table: Activity
+
++----------------+---------+
+| Column Name    | Type    |
++----------------+---------+
+| machine_id     | int     |
+| process_id     | int     |
+| activity_type  | enum    |
+| timestamp      | float   |
++----------------+---------+
+The table shows the user activities for a factory website.
+(machine_id, process_id, activity_type) is the primary key (combination of columns with unique values) of this table.
+machine_id is the ID of a machine.
+process_id is the ID of a process running on the machine with ID machine_id.
+activity_type is an ENUM (category) of type ('start', 'end').
+timestamp is a float representing the current time in seconds.
+'start' means the machine starts the process at the given timestamp and 'end' means the machine ends the process at the given timestamp.
+The 'start' timestamp will always be before the 'end' timestamp for every (machine_id, process_id) pair.
+It is guaranteed that each (machine_id, process_id) pair has a 'start' and 'end' timestamp.
+ 
+
+There is a factory website that has several machines each running the same number of processes. Write a solution to find the average time each machine takes to complete a process.
+
+The time to complete a process is the 'end' timestamp minus the 'start' timestamp. The average time is calculated by the total time to complete every process on the machine divided by the number of processes that were run.
+
+The resulting table should have the machine_id along with the average time as processing_time, which should be rounded to 3 decimal places.
+
+Return the result table in any order.
+Bu soru, bir fabrikanın makinelerinde çalışan işlemlerin başlangıç ve bitiş zamanları verisini içeren bir tabloyu kullanarak, her makine için bir işlemi tamamlamak için geçen ortalama süreyi hesaplamamızı istiyor.
+*/
+SELECT machine_id, 
+       ROUND(AVG(end_time - start_time), 3) AS processing_time
+FROM (
+    SELECT a.machine_id, 
+           a.process_id, 
+           a.timestamp AS start_time, 
+           b.timestamp AS end_time
+    FROM Activity a
+    JOIN Activity b 
+    ON a.machine_id = b.machine_id 
+       AND a.process_id = b.process_id
+       AND a.activity_type = 'start' 
+       AND b.activity_type = 'end'
+) AS process_times
+GROUP BY machine_id;
+
+/*
+Table: Employee
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| empId       | int     |
+| name        | varchar |
+| supervisor  | int     |
+| salary      | int     |
++-------------+---------+
+empId is the column with unique values for this table.
+Each row of this table indicates the name and the ID of an employee in addition to their salary and the id of their manager.
+ 
+
+Table: Bonus
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| empId       | int  |
+| bonus       | int  |
++-------------+------+
+empId is the column of unique values for this table.
+empId is a foreign key (reference column) to empId from the Employee table.
+Each row of this table contains the id of an employee and their respective bonus.
+ 
+
+Write a solution to report the name and bonus amount of each employee with a bonus less than 1000.
+
+Return the result table in any order.
+
+The result format is in the following example.
+Bu soru, bonus miktarı 1000'den az olan çalışanların isimlerini ve bonus miktarlarını listelememizi istiyor. Verilen tablolarda çalışan bilgileri ve bonus bilgileri yer almakta.
+*/
+SELECT name, bonus
+FROM Employee e
+LEFT JOIN Bonus b
+ON e.empId = b.empId
+WHERE bonus < 1000
+OR bonus IS NULL
+/*
+Table: Students
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| student_id    | int     |
+| student_name  | varchar |
++---------------+---------+
+student_id is the primary key (column with unique values) for this table.
+Each row of this table contains the ID and the name of one student in the school.
+ 
+
+Table: Subjects
+
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| subject_name | varchar |
++--------------+---------+
+subject_name is the primary key (column with unique values) for this table.
+Each row of this table contains the name of one subject in the school.
+ 
+
+Table: Examinations
+
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| student_id   | int     |
+| subject_name | varchar |
++--------------+---------+
+There is no primary key (column with unique values) for this table. It may contain duplicates.
+Each student from the Students table takes every course from the Subjects table.
+Each row of this table indicates that a student with ID student_id attended the exam of subject_name.
+ 
+
+Write a solution to find the number of times each student attended each exam.
+
+Return the result table ordered by student_id and subject_name.
+Bu soru, her öğrencinin her derse kaç kez katıldığını öğrenmemizi istiyor. Bunun için Students, Subjects ve Examinations tabloları kullanılıyor.
+
+
+
+*/
+SELECT a.student_id, a.student_name, b.subject_name, COUNT(c.subject_name) AS attended_exams
+FROM Students a
+JOIN Subjects b
+LEFT JOIN Examinations c
+ON a.student_id = c.student_id
+AND b.subject_name = c.subject_name
+GROUP BY 1, 3
+ORDER BY 1, 3 
+/*
+Table: Employee
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| id          | int     |
+| name        | varchar |
+| department  | varchar |
+| managerId   | int     |
++-------------+---------+
+id is the primary key (column with unique values) for this table.
+Each row of this table indicates the name of an employee, their department, and the id of their manager.
+If managerId is null, then the employee does not have a manager.
+No employee will be the manager of themself.
+ 
+
+Write a solution to find managers with at least five direct reports.
+
+Return the result table in any order.
+Bu soruda, en az 5 doğrudan raporuna sahip olan yöneticileri bulmamız isteniyor. Employee tablosunda her çalışanın id'si, adı, departmanı ve yöneticisi (managerId) bulunuyor. Eğer bir çalışanın managerId null ise, bu çalışanın bir yöneticisi yok demektir.
+*/
+SELECT name 
+FROM Employee 
+WHERE id IN
+  (SELECT managerId 
+   FROM Employee 
+   GROUP BY managerId 
+   HAVING COUNT(*) >= 5
+/*
+Table: Signups
+
++----------------+----------+
+| Column Name    | Type     |
++----------------+----------+
+| user_id        | int      |
+| time_stamp     | datetime |
++----------------+----------+
+user_id is the column of unique values for this table.
+Each row contains information about the signup time for the user with ID user_id.
+ 
+
+Table: Confirmations
+
++----------------+----------+
+| Column Name    | Type     |
++----------------+----------+
+| user_id        | int      |
+| time_stamp     | datetime |
+| action         | ENUM     |
++----------------+----------+
+(user_id, time_stamp) is the primary key (combination of columns with unique values) for this table.
+user_id is a foreign key (reference column) to the Signups table.
+action is an ENUM (category) of the type ('confirmed', 'timeout')
+Each row of this table indicates that the user with ID user_id requested a confirmation message at time_stamp and that confirmation message was either confirmed ('confirmed') or expired without confirming ('timeout').
+ 
+
+The confirmation rate of a user is the number of 'confirmed' messages divided by the total number of requested confirmation messages. The confirmation rate of a user that did not request any confirmation messages is 0. Round the confirmation rate to two decimal places.
+
+Write a solution to find the confirmation rate of each user.
+
+Return the result table in any order.
+Bu soruda, her kullanıcının doğrulama oranını bulmamız isteniyor. Kullanıcılar, doğrulama mesajı isteyebilir ve bu mesajlar ya doğrulanır ('confirmed') ya da zaman aşımına uğrar ('timeout'). Her kullanıcının doğrulama oranı, 'confirmed' mesajlarının sayısının toplam talep edilen mesaj sayısına bölünmesiyle hesaplanır.
+
+Eğer bir kullanıcı hiç doğrulama talebinde bulunmamışsa, oranı 0 olacaktır.
+
+*/
+SELECT 
+  s.user_id, 
+  ROUND(
+    COALESCE(
+      SUM(
+        CASE WHEN ACTION = 'confirmed' THEN 1 END
+      ) / COUNT(*), 0),2) 
+  AS confirmation_rate 
+FROM Signups s 
+LEFT JOIN Confirmations c 
+ON s.user_id = c.user_id 
+GROUP BY s.user_id;  
+/*
+Table: Cinema
+
++----------------+----------+
+| Column Name    | Type     |
++----------------+----------+
+| id             | int      |
+| movie          | varchar  |
+| description    | varchar  |
+| rating         | float    |
++----------------+----------+
+id is the primary key (column with unique values) for this table.
+Each row contains information about the name of a movie, its genre, and its rating.
+rating is a 2 decimal places float in the range [0, 10]
+ 
+
+Write a solution to report the movies with an odd-numbered ID and a description that is not "boring".
+
+Return the result table ordered by rating in descending order.
+
+The result format is in the following example.
+
+Bu soruda, ID'si tek olan ve açıklaması ("description") "boring" olmayan filmleri listelememiz isteniyor. Listeleme işlemi, rating (puan) sırasına göre azalan olarak yapılacak.
+
+
+
+*/
+SELECT *
+FROM Cinema
+WHERE id % 2 <> 0 
+AND description <> "boring"
+ORDER BY rating DESC
+/*
+Table: Prices
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| product_id    | int     |
+| start_date    | date    |
+| end_date      | date    |
+| price         | int     |
++---------------+---------+
+(product_id, start_date, end_date) is the primary key (combination of columns with unique values) for this table.
+Each row of this table indicates the price of the product_id in the period from start_date to end_date.
+For each product_id there will be no two overlapping periods. That means there will be no two intersecting periods for the same product_id.
+ 
+
+Table: UnitsSold
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| product_id    | int     |
+| purchase_date | date    |
+| units         | int     |
++---------------+---------+
+This table may contain duplicate rows.
+Each row of this table indicates the date, units, and product_id of each product sold. 
+ 
+
+Write a solution to find the average selling price for each product. average_price should be rounded to 2 decimal places. If a product does not have any sold units, its average selling price is assumed to be 0.
+
+Return the result table in any order.
+
+The result format is in the following example.
+Bu soruda, her ürün için ortalama satış fiyatı hesaplanacak. Ortalama satış fiyatı, satılan birimlerin sayısı ile fiyatların çarpılmasından elde edilen toplam değerin, satılan birim sayısına bölünmesiyle bulunur.
+Bir ürüne hiç satış yapılmamışsa, o ürünün ortalama satış fiyatı 0 olarak kabul edilecek. Sonuç, ortalama fiyat iki ondalıklı sayı ile yuvarlanmış olarak döndürülmeli.
+
+
+
+*/
+SELECT 
+    p.product_id,
+    ROUND(SUM(u.units * p.price) / NULLIF(SUM(u.units), 0), 2) AS average_price
+FROM Prices p
+LEFT JOIN UnitsSold u
+    ON p.product_id = u.product_id 
+    AND u.purchase_date BETWEEN p.start_date AND p.end_date
+GROUP BY p.product_id;
+
+/*
+Table: Project
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| project_id  | int     |
+| employee_id | int     |
++-------------+---------+
+(project_id, employee_id) is the primary key of this table.
+employee_id is a foreign key to Employee table.
+Each row of this table indicates that the employee with employee_id is working on the project with project_id.
+ 
+
+Table: Employee
+
++------------------+---------+
+| Column Name      | Type    |
++------------------+---------+
+| employee_id      | int     |
+| name             | varchar |
+| experience_years | int     |
++------------------+---------+
+employee_id is the primary key of this table. It's guaranteed that experience_years is not NULL.
+Each row of this table contains information about one employee.
+ 
+
+Write an SQL query that reports the average experience years of all the employees for each project, rounded to 2 digits.
+
+Return the result table in any order.
+Bu soruda, her proje için çalışanların ortalama deneyim yılı hesaplanacak. Proje ve çalışan verileri Project ve Employee tablolarında bulunmaktadır. 
+Soru, her projede çalışan tüm çalışanların deneyim yıllarının ortalamasını döndürmeyi istemektedir. Sonuç, 2 ondalıklı basamağa yuvarlanmış olarak verilecektir.
+*/
+SELECT 
+    p.project_id,
+    ROUND(AVG(e.experience_years), 2) AS average_experience_years
+FROM Project p
+JOIN Employee e
+    ON p.employee_id = e.employee_id
+GROUP BY p.project_id;
+
+/*
+Table: Users
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| user_id     | int     |
+| user_name   | varchar |
++-------------+---------+
+user_id is the primary key (column with unique values) for this table.
+Each row of this table contains the name and the id of a user.
+ 
+
+Table: Register
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| contest_id  | int     |
+| user_id     | int     |
++-------------+---------+
+(contest_id, user_id) is the primary key (combination of columns with unique values) for this table.
+Each row of this table contains the id of a user and the contest they registered into.
+ 
+
+Write a solution to find the percentage of the users registered in each contest rounded to two decimals.
+
+Return the result table ordered by percentage in descending order. In case of a tie, order it by contest_id in ascending order.
+Bu sorgu, her yarışma için kaydolan kullanıcıların yüzdesini hesaplayacaktır. Yüzde, her yarışma için toplam kullanıcı sayısının, yarışmaya kayıt olan kullanıcı sayısına oranıdır.
+*/SELECT r.contest_id,
+       ROUND(COUNT(DISTINCT r.user_id) * 100 / (SELECT COUNT(DISTINCT user_id) FROM Users), 2) AS percentage
+FROM Register r
+GROUP BY r.contest_id
+ORDER BY percentage DESC, r.contest_id ASC;
+/*
+Table: Queries
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| query_name  | varchar |
+| result      | varchar |
+| position    | int     |
+| rating      | int     |
++-------------+---------+
+This table may have duplicate rows.
+This table contains information collected from some queries on a database.
+The position column has a value from 1 to 500.
+The rating column has a value from 1 to 5. Query with rating less than 3 is a poor query.
+ 
+
+We define query quality as:
+
+The average of the ratio between query rating and its position.
+
+We also define poor query percentage as:
+
+The percentage of all queries with rating less than 3.
+
+Write a solution to find each query_name, the quality and poor_query_percentage.
+
+Both quality and poor_query_percentage should be rounded to 2 decimal places.
+
+Return the result table in any order.
+
+
+
+
+
+
+*/
+SELECT query_name, 
+    ROUND(AVG(rating/position), 2) AS quality, 
+    ROUND(SUM(IF(rating < 3, 1, 0)) * 100/ COUNT(rating), 2) AS poor_query_percentage
+FROM Queries
+GROUP BY query_name
+/*
+Table: Transactions
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| id            | int     |
+| country       | varchar |
+| state         | enum    |
+| amount        | int     |
+| trans_date    | date    |
++---------------+---------+
+id is the primary key of this table.
+The table has information about incoming transactions.
+The state column is an enum of type ["approved", "declined"].
+ 
+
+Write an SQL query to find for each month and country, the number of transactions and their total amount, the number of approved transactions and their total amount.
+
+Return the result table in any order.
+*/
+SELECT DATE_FORMAT(trans_date, '%Y-%m') month, country, 
+        COUNT(state) trans_count, 
+        SUM(IF(state = 'approved', 1, 0)) approved_count, 
+        SUM(amount) trans_total_amount,
+        SUM(IF(state = 'approved', amount, 0)) approved_total_amount
+FROM Transactions
+GROUP BY 1, 2
+/*
+Table: Delivery
+
++-----------------------------+---------+
+| Column Name                 | Type    |
++-----------------------------+---------+
+| delivery_id                 | int     |
+| customer_id                 | int     |
+| order_date                  | date    |
+| customer_pref_delivery_date | date    |
++-----------------------------+---------+
+delivery_id is the column of unique values of this table.
+The table holds information about food delivery to customers that make orders at some date and specify a preferred delivery date (on the same order date or after it).
+ 
+
+If the customer's preferred delivery date is the same as the order date, then the order is called immediate; otherwise, it is called scheduled.
+
+The first order of a customer is the order with the earliest order date that the customer made. It is guaranteed that a customer has precisely one first order.
+
+Write a solution to find the percentage of immediate orders in the first orders of all customers, rounded to 2 decimal places.
+*/SELECT
+    ROUND((COUNT(CASE WHEN d.order_date = d.customer_pref_delivery_date THEN 1 END) / COUNT(*)) * 100, 2)  immediate_percentage
+FROM Delivery d
+WHERE d.order_date = (
+    SELECT
+    MIN(order_date)
+    FROM Delivery
+    WHERE customer_id = d.customer_id
+    );
+/*
+Table: Activity
+
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| player_id    | int     |
+| device_id    | int     |
+| event_date   | date    |
+| games_played | int     |
++--------------+---------+
+(player_id, event_date) is the primary key (combination of columns with unique values) of this table.
+This table shows the activity of players of some games.
+Each row is a record of a player who logged in and played a number of games (possibly 0) before logging out on someday using some device.
+ 
+
+Write a solution to report the fraction of players that logged in again on the day after the day they first logged in, rounded to 2 decimal places. In other words
+you need to count the number of players that logged in for at least two consecutive days starting from their first login date, then divide that number by the total number of players.
+
+The result format is in the following example.
+
+Bu soruda, her oyuncunun ilk giriş tarihinden sonra bir gün daha giriş yapıp yapmadığını kontrol etmek ve bu oyuncuların sayısını toplam oyuncu sayısına bölmek gerekiyor. Sonuç, 2 ondalıklı basamağa yuvarlanmalıdır.
+*/
+WITH FirstLogin AS (
+    SELECT player_id, MIN(event_date) AS first_login_date
+    FROM Activity
+    GROUP BY player_id
+),
+NextLogin AS (
+    SELECT a.player_id
+    FROM Activity a
+    JOIN FirstLogin f ON a.player_id = f.player_id
+    WHERE a.event_date = DATE_ADD(f.first_login_date, INTERVAL 1 DAY)
+)
+SELECT ROUND(COUNT(DISTINCT n.player_id) * 100.0 / (SELECT COUNT(DISTINCT player_id) FROM Activity), 2) AS login_fraction
+FROM NextLogin n;
+
+/*
+Table: Teacher
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| teacher_id  | int  |
+| subject_id  | int  |
+| dept_id     | int  |
++-------------+------+
+(subject_id, dept_id) is the primary key (combinations of columns with unique values) of this table.
+Each row in this table indicates that the teacher with teacher_id teaches the subject subject_id in the department dept_id.
+ 
+
+Write a solution to calculate the number of unique subjects each teacher teaches in the university.
+
+Return the result table in any order.
+
+
+*/
+SELECT teacher_id, COUNT(DISTINCT subject_id) cnt
+FROM Teacher
+GROUP BY teacher_id
+
+/*Table: Activity
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| user_id       | int     |
+| session_id    | int     |
+| activity_date | date    |
+| activity_type | enum    |
++---------------+---------+
+This table may have duplicate rows.
+The activity_type column is an ENUM (category) of type ('open_session', 'end_session', 'scroll_down', 'send_message').
+The table shows the user activities for a social media website. 
+Note that each session belongs to exactly one user.
+ 
+
+Write a solution to find the daily active user count for a period of 30 days ending 2019-07-27 inclusively. A user was active on someday if they made at least one activity on that day.
+
+Return the result table in any order.
+
+Bu soruda, 2019-07-27 tarihine kadar olan 30 gün boyunca her günün aktif kullanıcı sayısını hesaplamamız isteniyor. Bir kullanıcı, o gün en az bir etkinlik yapmışsa aktif olarak kabul edilir.
+ */
+SELECT activity_date as day, COUNT(DISTINCT user_id) AS active_users
+FROM Activity
+WHERE activity_date BETWEEN DATE_SUB('2019-07-27', INTERVAL 29 DAY) AND '2019-07-27'
+GROUP BY activity_date
+/*Table: Sales
+
++-------------+-------+
+| Column Name | Type  |
++-------------+-------+
+| sale_id     | int   |
+| product_id  | int   |
+| year        | int   |
+| quantity    | int   |
+| price       | int   |
++-------------+-------+
+(sale_id, year) is the primary key (combination of columns with unique values) of this table.
+product_id is a foreign key (reference column) to Product table.
+Each row of this table shows a sale on the product product_id in a certain year.
+Note that the price is per unit.
+ 
+
+Table: Product
+
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| product_id   | int     |
+| product_name | varchar |
++--------------+---------+
+product_id is the primary key (column with unique values) of this table.
+Each row of this table indicates the product name of each product.
+ 
+
+
+ 
+
+*/
+SELECT s.product_id, s.year, s.quantity, s.price
+FROM Sales s
+JOIN (
+    SELECT product_id, MIN(year) AS first_year
+    FROM Sales
+    GROUP BY product_id
+) first_sales
+ON s.product_id = first_sales.product_id AND s.year = first_sales.first_year;
+
+/*
+Table: Courses
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| student     | varchar |
+| class       | varchar |
++-------------+---------+
+(student, class) is the primary key (combination of columns with unique values) for this table.
+Each row of this table indicates the name of a student and the class in which they are enrolled.
+ 
+
+Write a solution to find all the classes that have at least five students.
+
+Return the result table in any order.
+
+
+Bu soruda, her bir sınıfa (class) kayıtlı en az 5 öğrenci bulunan sınıfları bulmamız isteniyor. Sonuç olarak, sınıf adlarını listelemeliyiz.
+
+
+
+*/
+
+SELECT class
+FROM Courses
+GROUP BY class
+HAVING COUNT(student) >= 5
+
+/*
+Table: Followers
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| user_id     | int  |
+| follower_id | int  |
++-------------+------+
+(user_id, follower_id) is the primary key (combination of columns with unique values) for this table.
+This table contains the IDs of a user and a follower in a social media app where the follower follows the user.
+ 
+
+Write a solution that will, for each user, return the number of followers.
+
+Return the result table ordered by user_id in ascending order.
+*/Bu soruda, her bir kullanıcı için takipçi sayısını döndürmemiz isteniyor. Sonuçların kullanıcı ID'sine göre sıralanması gerekiyor.
+
+
+
+SELECT user_id, COUNT(follower_id) AS num_followers
+FROM Followers
+GROUP BY user_id
+ORDER BY user_id ASC;
+
+
+/*
+Table: MyNumbers
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| num         | int  |
++-------------+------+
+This table may contain duplicates (In other words, there is no primary key for this table in SQL).
+Each row of this table contains an integer.
+ 
+
+A single number is a number that appeared only once in the MyNumbers table.
+
+Find the largest single number. If there is no single number, report null.
+
+*/Bu soruda, MyNumbers tablosundaki yalnızca bir kez görünen en büyük sayıyı bulmamız isteniyor. Eğer hiç tek bir kez görünen sayı yoksa, null döndürmemiz isteniyor.
+
+
+SELECT MAX(num) AS largest_single_number
+FROM MyNumbers
+GROUP BY num
+HAVING COUNT(num) = 1;
+
+
+Table: Customer
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| customer_id | int     |
+| product_key | int     |
++-------------+---------+
+This table may contain duplicates rows. 
+customer_id is not NULL.
+product_key is a foreign key (reference column) to Product table.
+ 
+
+Table: Product
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| product_key | int     |
++-------------+---------+
+product_key is the primary key (column with unique values) for this table.
+ 
+
+Write a solution to report the customer ids from the Customer table that bought all the products in the Product table.
+
+Return the result table in any order.
+*/Bu soruda, Customer tablosundaki, Product tablosundaki tüm ürünleri satın alan müşteri kimliklerini (customer_id) bulmamız isteniyor.
+
+
+
+
+SELECT customer_id
+FROM Customer
+GROUP BY customer_id
+HAVING COUNT(DISTINCT product_key) = (SELECT COUNT(*) FROM Product);
+
+/**/
+
